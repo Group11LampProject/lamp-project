@@ -1,0 +1,11 @@
+# Environment and config files with sensitive info
+.env
+config.php
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
