@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ContactHub - My Contacts</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+</head>
+<body class="page-contacts">
+
+  <!--
+    JS (contacts.js) must check sessionStorage for a valid user object on load.
+    If not found, redirect immediately to login.html.
+  -->
+
+  <!-- ===== TOP NAV ===== -->
+  <header class="topbar" role="banner">
+    <span class="logo-sm">Contact<span>Hub</span></span>
+    <nav class="topbar-right" aria-label="User actions">
+      <!-- JS: populate with logged-in user's name from sessionStorage -->
+      <span class="user-greeting" id="user-greeting"></span>
+      <button class="btn-icon" id="btn-logout" aria-label="Logout" type="button">
+        <i class="ti ti-logout" aria-hidden="true"></i>
+      </button>
+      <!--
+        JS on logout:
+        - Clear sessionStorage.
+        - Redirect to index.html.
+        - No API call needed unless server sessions are used.
+      -->
+    </nav>
+  </header>
+
+  <!-- ===== MAIN LAYOUT ===== -->
+  <main class="contacts-layout">
+
+    <!-- ===== LEFT PANEL: search + list ===== -->
+    <aside class="panel-list" aria-label="Contacts list">
+
+      <!-- Search bar -->
+      <div class="search-wrap">
+        <label for="search-input" class="sr-only">Search contacts</label>
+        <div class="search-icon-wrap">
+          <i class="ti ti-search" aria-hidden="true"></i>
+          <!--
+            JS: listen to 'input' event.
+            When value.length >= 1, fire GET /LAMPAPI/SearchContacts.php?search=TERM&userId=USER_ID
+            Expect: { "contacts": [ {id, firstName, lastName, email, phone, address, notes}, ... ], "error": "" }
+            Render results into #contacts-list.
+            When field is cleared, reload full contact list.
+            IMPORTANT: do NOT cache contacts client-side. Every search is a server round-trip.
+          -->
+          <input type="search" id="search-input"
+                 placeholder="Search contacts..."
+                 autocomplete="off"
+                 aria-label="Search contacts" />
+        </div>
+      </div>
+
+      <!-- Contact count label -->
+      <div class="list-meta">
+        <span id="contact-count">0 contacts</span>
+        <button class="btn-add-sm" id="btn-add-contact" type="button" aria-label="Add new contact">
+          <i class="ti ti-plus" aria-hidden="true"></i> Add
+        </button>
+      </div>
+
+      <!-- Contact list populated by JS -->
+      <ul class="contacts-list" id="contacts-list" role="list" aria-live="polite">
+        <!--
+          JS: on load, fetch GET /LAMPAPI/GetContacts.php?userId=USER_ID
+          Expect: { "contacts": [ {...}, ... ], "error": "" }
+          For each contact render a <li> with class "contact-item" like the sample below.
+          Clicking a row calls loadContactDetail(contactId).
+        -->
+
+        <!-- Sample row structure for CSS teammate reference (JS will generate these): -->
+        <!--
+        <li class="contact-item" data-id="1" tabindex="0" role="button" aria-label="Jane Doe">
+          <div class="avatar">JD</div>
+          <div class="contact-meta">
+            <p class="contact-name">Jane Doe</p>
+            <p class="contact-sub">jane.doe@email.com</p>
+          </div>
+          <i class="ti ti-chevron-right" aria-hidden="true"></i>
+        </li>
+        -->
+      </ul>
+
+      <!-- Empty state shown by JS when list is empty -->
+      <div class="empty-state hidden" id="empty-state" aria-live="polite">
+        <i class="ti ti-users" aria-hidden="true"></i>
+        <p>No contacts found.</p>
+        <p class="empty-hint">Tap Add to create your first one.</p>
+      </div>
+
+    </aside>
+
+    <!-- ===== RIGHT PANEL: detail / add / edit ===== -->
+    <section class="panel-detail" id="panel-detail" aria-label="Contact detail">
+
+      <!-- Default state: nothing selected -->
+      <div class="detail-placeholder" id="detail-placeholder">
+        <i class="ti ti-address-book" aria-hidden="true"></i>
+        <p>Select a contact to view details</p>
+      </div>
+
+      <!-- ===== CONTACT DETAIL VIEW ===== -->
+      <div class="detail-view hidden" id="detail-view">
+
+        <div class="detail-hero">
+          <!-- JS: populate avatar initials, name, and relationship -->
+          <div class="avatar-lg" id="detail-avatar"></div>
+          <h1 class="detail-name" id="detail-name"></h1>
+          <p class="detail-rel" id="detail-rel"></p>
+        </div>
+
+        <div class="detail-fields">
+          <div class="detail-row">
+            <i class="ti ti-mail" aria-hidden="true"></i>
+            <div class="detail-row-inner">
+              <p class="detail-label">Email</p>
+              <p class="detail-val" id="detail-email"></p>
+            </div>
+          </div>
+          <div class="detail-row">
+            <i class="ti ti-phone" aria-hidden="true"></i>
+            <div class="detail-row-inner">
+              <p class="detail-label">Phone</p>
+              <p class="detail-val" id="detail-phone"></p>
+            </div>
+          </div>
+          <div class="detail-row">
+            <i class="ti ti-map-pin" aria-hidden="true"></i>
+            <div class="detail-row-inner">
+              <p class="detail-label">Address</p>
+              <p class="detail-val" id="detail-address"></p>
+            </div>
+          </div>
+          <div class="detail-row">
+            <i class="ti ti-notes" aria-hidden="true"></i>
+            <div class="detail-row-inner">
+              <p class="detail-label">Notes</p>
+              <p class="detail-val" id="detail-notes"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <!--
+            Delete button:
+            JS: show a confirm dialog (the ONE allowed exception to the no-alert rule).
+            On confirm, DELETE /LAMPAPI/DeleteContact.php
+            Body: { "contactId": "...", "userId": "..." }
+            Expect: { "error": "" }
+            On success: reload contact list, show detail-placeholder.
+          -->
+          <button class="btn-del" id="btn-delete" type="button">
+            <i class="ti ti-trash" aria-hidden="true"></i> Delete
+          </button>
+          <!-- Edit: JS switches to #form-view and pre-fills all fields -->
+          <button class="btn-edit-action" id="btn-edit" type="button">
+            <i class="ti ti-edit" aria-hidden="true"></i> Edit
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ===== ADD / EDIT FORM ===== -->
+      <div class="form-view hidden" id="form-view">
+
+        <div class="form-topbar">
+          <!-- JS: set text to "New Contact" or "Edit Contact" depending on mode -->
+          <h2 class="form-title" id="form-title">New Contact</h2>
+          <button class="btn-text-cancel" id="btn-cancel-form" type="button">Cancel</button>
+        </div>
+
+        <!-- Inline error for add/edit failures -->
+        <div class="msg msg-error hidden" id="form-error" role="alert" aria-live="polite">
+          Could not save contact. Please try again.
+        </div>
+
+        <div class="form-body">
+
+          <p class="section-label">Basic info</p>
+
+          <div class="field-group">
+            <label for="form-firstname">First name</label>
+            <input type="text" id="form-firstname" placeholder="Jane"
+                   autocomplete="given-name" />
+          </div>
+
+          <div class="field-group">
+            <label for="form-lastname">Last name</label>
+            <input type="text" id="form-lastname" placeholder="Doe"
+                   autocomplete="family-name" />
+          </div>
+
+          <div class="field-group">
+            <label for="form-rel">Relationship</label>
+            <input type="text" id="form-rel"
+                   placeholder="Friend, colleague, family..." />
+          </div>
+
+          <p class="section-label">Contact info</p>
+
+          <div class="field-group">
+            <label for="form-email">Email address</label>
+            <input type="email" id="form-email" placeholder="name@email.com"
+                   autocomplete="email" />
+          </div>
+
+          <div class="field-group">
+            <label for="form-phone">Phone number</label>
+            <input type="tel" id="form-phone" placeholder="(555) 000-0000"
+                   autocomplete="tel" />
+          </div>
+
+          <div class="field-group">
+            <label for="form-address">Address</label>
+            <input type="text" id="form-address"
+                   placeholder="Street, city, state, zip"
+                   autocomplete="street-address" />
+          </div>
+
+          <p class="section-label">Notes</p>
+
+          <div class="field-group">
+            <label for="form-notes">Notes</label>
+            <input type="text" id="form-notes"
+                   placeholder="How you met, birthday, anything useful..." />
+          </div>
+
+          <!--
+            Save button:
+            ADD mode: POST /LAMPAPI/AddContact.php
+              Body: { "firstName":"","lastName":"","email":"","phone":"","address":"","notes":"","userId":"" }
+              Expect: { "error": "" }
+
+            EDIT mode: POST /LAMPAPI/EditContact.php
+              Body: { "contactId":"","firstName":"","lastName":"","email":"","phone":"","address":"","notes":"","userId":"" }
+              Expect: { "error": "" }
+
+            On success: reload contact list, switch to detail-view for the saved contact.
+            On failure: show #form-error.
+          -->
+          <button class="btn-primary btn-save" id="btn-save-contact" type="button">
+            Save contact
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="js/contacts.js"></script>
+  <!--
+    contacts.js responsibilities (JS teammate):
+    1. On load: check sessionStorage for user. If missing, redirect to login.html.
+    2. Load full contact list via GetContacts.php and render into #contacts-list.
+    3. Update #contact-count with number of results.
+    4. Search input: fire SearchContacts.php on every keystroke (debounce 300ms recommended).
+    5. Clicking a contact row: populate and show #detail-view, hide others.
+    6. btn-add-contact: show #form-view in ADD mode (clear all fields, set title to "New Contact").
+    7. btn-edit: show #form-view in EDIT mode (pre-fill fields, set title to "Edit Contact").
+    8. btn-cancel-form: return to appropriate previous view.
+    9. btn-save-contact: POST to add or edit endpoint, handle response.
+    10. btn-delete: confirm dialog, DELETE endpoint, refresh list.
+    11. btn-logout: clear sessionStorage, redirect to index.html.
+    12. NEVER use alert() except for the delete confirmation.
+  -->
+
+</body>
+</html>

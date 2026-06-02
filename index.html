@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ContactHub</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Tabler icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+</head>
+<body class="page-landing">
+
+  <main class="landing-wrap">
+
+    <div class="landing-card">
+
+      <!-- Logo -->
+      <div class="logo">Contact<span>Hub</span></div>
+      <p class="landing-sub">Your personal contact manager.</p>
+
+      <!-- Primary actions -->
+      <a href="login.html" class="btn-primary" id="btn-go-login">Sign in</a>
+      <a href="login.html#register" class="btn-secondary" id="btn-go-register">Create account</a>
+
+      <!-- Feature highlights -->
+      <div class="feature-list">
+        <div class="feature-item">
+          <i class="ti ti-lock" aria-hidden="true"></i>
+          <span>Private contacts, only visible to you</span>
+        </div>
+        <div class="feature-item">
+          <i class="ti ti-search" aria-hidden="true"></i>
+          <span>Fast server-side search</span>
+        </div>
+        <div class="feature-item">
+          <i class="ti ti-shield-check" aria-hidden="true"></i>
+          <span>Passwords hashed and secured</span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="js/index.js"></script>
+  <!--
+    index.js responsibilities (JS teammate):
+    - Check if a valid session token exists in sessionStorage.
+    - If logged in, redirect immediately to contacts.html.
+    - No AJAX calls needed on this page otherwise.
+  -->
+
+</body>
+</html>

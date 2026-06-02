@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ContactHub - Sign In</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+</head>
+<body class="page-auth">
+
+  <main class="auth-wrap">
+
+    <!-- ========== LOGIN FORM ========== -->
+    <section class="auth-card" id="section-login">
+
+      <div class="logo">Contact<span>Hub</span></div>
+      <p class="auth-sub">Sign in to your account</p>
+
+      <!-- Inline error shown by JS on failed login, no alert() allowed -->
+      <div class="msg msg-error" id="login-error" role="alert" aria-live="polite">
+        Incorrect email or password.
+      </div>
+
+      <div class="field-group">
+        <label for="login-email">Email address</label>
+        <!--
+          JS: on submit, POST to /LAMPAPI/Login.php
+          Body:  { "email": "...", "password": "..." }
+          Expect: { "id": 1, "firstName": "...", "lastName": "...", "error": "" }
+          On success: store user data in sessionStorage, redirect to contacts.html
+          On failure: show #login-error
+        -->
+        <input type="email" id="login-email" placeholder="you@email.com"
+               autocomplete="email" required />
+      </div>
+
+      <div class="field-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Your password"
+               autocomplete="current-password" required />
+      </div>
+
+      <button class="btn-primary" id="btn-login" type="button">Sign in</button>
+
+      <hr class="divider" />
+      <p class="switch-link">
+        No account?
+        <a href="#" id="link-show-register">Create one</a>
+      </p>
+
+    </section>
+
+    <!-- ========== REGISTER FORM ========== -->
+    <section class="auth-card hidden" id="section-register">
+
+      <div class="logo">Contact<span>Hub</span></div>
+      <p class="auth-sub">Create your free account</p>
+
+      <!-- Success message shown by JS after successful registration -->
+      <div class="msg msg-success" id="register-success" role="status" aria-live="polite">
+        Account created. You can now sign in.
+      </div>
+
+      <!-- Inline error for registration failures -->
+      <div class="msg msg-error" id="register-error" role="alert" aria-live="polite">
+        Something went wrong. Please try again.
+      </div>
+
+      <div class="field-group">
+        <label for="reg-firstname">First name</label>
+        <!--
+          JS: on submit, POST to /LAMPAPI/Register.php
+          Body:  { "firstName": "...", "lastName": "...", "email": "...", "password": "..." }
+          Expect: { "error": "" }
+          On success: show #register-success, switch back to login section
+          On failure: show #register-error with server message
+        -->
+        <input type="text" id="reg-firstname" placeholder="Jane"
+               autocomplete="given-name" required />
+      </div>
+
+      <div class="field-group">
+        <label for="reg-lastname">Last name</label>
+        <input type="text" id="reg-lastname" placeholder="Doe"
+               autocomplete="family-name" required />
+      </div>
+
+      <div class="field-group">
+        <label for="reg-email">Email address</label>
+        <input type="email" id="reg-email" placeholder="you@email.com"
+               autocomplete="email" required />
+      </div>
+
+      <div class="field-group">
+        <label for="reg-password">Password</label>
+        <input type="password" id="reg-password" placeholder="At least 8 characters"
+               autocomplete="new-password" required />
+      </div>
+
+      <div class="field-group">
+        <label for="reg-confirm">Confirm password</label>
+        <input type="password" id="reg-confirm" placeholder="Repeat password"
+               autocomplete="new-password" required />
+        <!-- Shown by JS if passwords do not match, before any API call -->
+        <p class="field-error hidden" id="reg-match-error">Passwords do not match.</p>
+      </div>
+
+      <button class="btn-primary" id="btn-register" type="button">Create account</button>
+
+      <hr class="divider" />
+      <p class="switch-link">
+        Already have an account?
+        <a href="#" id="link-show-login">Sign in</a>
+      </p>
+
+    </section>
+
+  </main>
+
+  <script src="js/login.js"></script>
+  <!--
+    login.js responsibilities (JS teammate):
+    - Toggle between #section-login and #section-register when links are clicked.
+    - If URL hash is #register on load, show register section automatically.
+    - Handle login POST and register POST as described in comments above.
+    - Never use alert() for errors, use the .msg elements already in the HTML.
+  -->
+
+</body>
+</html>
