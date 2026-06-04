@@ -605,3 +605,44 @@ button.buttons:active {
   }
 }
 
+body {
+  background: #f3f4f6;
+}
+
+main, .app, .app-shell, .landing-wrap {
+  background: #f3f4f6;
+}
+
+.card, .auth-panel, .contact-item, .app-header, .app-content {
+  background: #ffffff;
+}
+
+
+body {
+  background: #f3f4f6;
+}
+
+main,
+.app,
+.app-shell,
+.landing-wrap,
+.auth-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+input,
+textarea,
+select {
+  max-width: 600px;
+}
+
+.auth-panel,
+.card,
+.app-header,
+.app-content,
+.contact-item {
+  margin-left: auto;
+  margin-right: auto;
+}
