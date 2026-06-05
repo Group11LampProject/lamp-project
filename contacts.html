@@ -9,26 +9,25 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body.page-contacts {
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      max-height: 100vh;
+    html, body {
+      height: 100%;
+      width: 100%;
       overflow: hidden;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #1a4f8a;
-      margin: 0;
     }
 
     /* ── Topbar ── */
-    .topbar {
+    #topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      background: #0a0a0a;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 1.25rem;
-      height: 56px;
-      background: #0a0a0a;
-      flex-shrink: 0;
+      z-index: 100;
     }
     .logo-sm { font-size: 18px; font-weight: 700; color: #fff; }
     .logo-sm span { color: #5aaeff; }
@@ -42,39 +41,37 @@
     }
     .btn-icon:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-    /* ── Main layout ── */
-    .contacts-layout {
+    /* ── Main wrapper below topbar ── */
+    #main-wrapper {
+      position: fixed;
+      top: 56px; left: 0; right: 0; bottom: 0;
       display: flex;
-      flex: 1;
-      overflow: hidden;
-      padding: 16px;
       gap: 16px;
-      min-height: 0;
+      padding: 16px;
+      background: #1a4f8a;
     }
 
     /* ── Left panel ── */
-    .panel-list {
+    #panel-list {
       width: 320px;
       flex-shrink: 0;
+      background: #fff;
       border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      background: #ffffff;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.15);
-      min-height: 0;
     }
 
     /* ── Right panel ── */
-    .panel-detail {
+    #panel-detail {
       flex: 1;
+      background: #fff;
       border-radius: 16px;
-      overflow-y: auto;
-      background: #ffffff;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
-      min-height: 0;
+      overflow-y: auto;
     }
 
     /* ── Search ── */
@@ -87,7 +84,7 @@
       background: #f5faff; color: #0a0a0a;
       font-size: 14px; font-family: inherit;
     }
-    .search-icon-wrap input:focus { outline: none; border-color: #1a6fb5; box-shadow: 0 0 0 3px rgba(26,111,181,0.12); background: #fff; }
+    .search-icon-wrap input:focus { outline: none; border-color: #1a6fb5; background: #fff; }
 
     /* ── List meta ── */
     .list-meta {
@@ -105,7 +102,7 @@
     .btn-add-sm:hover { background: #1a4f8a; }
 
     /* ── Contacts list ── */
-    .contacts-list { list-style: none; flex: 1; overflow-y: auto; }
+    #contacts-list { list-style: none; flex: 1; overflow-y: auto; }
     .contact-item {
       display: flex; align-items: center; gap: 12px;
       padding: 12px; border-bottom: 1px solid #e8f1fb;
@@ -123,26 +120,26 @@
     .contact-sub { font-size: 13px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     /* ── Empty state ── */
-    .empty-state {
+    #empty-state {
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; padding: 3rem; text-align: center;
-      color: #999; font-size: 14px; gap: 8px;
+      color: #999; font-size: 14px; gap: 8px; flex: 1;
     }
-    .empty-state i { font-size: 44px; color: #ccc; }
-    .empty-hint { font-size: 13px; }
+    #empty-state i { font-size: 44px; color: #ccc; }
+
     .hidden { display: none !important; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
     /* ── Detail placeholder ── */
-    .detail-placeholder {
+    #detail-placeholder {
       flex: 1; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       gap: 12px; color: #aaa; font-size: 14px;
     }
-    .detail-placeholder i { font-size: 48px; color: #ccc; }
+    #detail-placeholder i { font-size: 48px; color: #ccc; }
 
     /* ── Detail view ── */
-    .detail-view { display: flex; flex-direction: column; flex: 1; }
+    #detail-view { display: flex; flex-direction: column; flex: 1; }
     .detail-hero {
       display: flex; flex-direction: column; align-items: center;
       padding: 2rem 1.5rem 1.5rem; border-bottom: 1px solid #e8f1fb;
@@ -155,7 +152,6 @@
     }
     .detail-name { font-size: 22px; font-weight: 600; margin: 0; color: #0a0a0a; }
     .detail-rel { font-size: 14px; color: #666; margin: 4px 0 0; }
-
     .detail-fields { flex: 1; }
     .detail-row {
       display: flex; align-items: flex-start; gap: 14px;
@@ -165,23 +161,19 @@
     .detail-row-inner { flex: 1; }
     .detail-label { font-size: 12px; color: #999; margin-bottom: 2px; }
     .detail-val { font-size: 15px; color: #0a0a0a; }
-
     .action-row {
       display: flex; gap: 10px;
       padding: 1.25rem 1.5rem; border-top: 1px solid #e8f1fb;
     }
     .btn-del {
-      flex: 1; padding: 11px;
-      background: none; color: #c0392b;
+      flex: 1; padding: 11px; background: none; color: #c0392b;
       border: 1px solid rgba(192,57,43,0.3); border-radius: 8px;
       font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit;
       display: flex; align-items: center; justify-content: center; gap: 6px;
-      transition: background 0.12s;
     }
     .btn-del:hover { background: #fdf1f0; }
     .btn-edit-action {
-      flex: 1; padding: 11px;
-      background: #0a0a0a; color: #fff;
+      flex: 1; padding: 11px; background: #0a0a0a; color: #fff;
       border: none; border-radius: 8px;
       font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
       display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -190,7 +182,7 @@
     .btn-edit-action:hover { background: #1a4f8a; }
 
     /* ── Form view ── */
-    .form-view { display: flex; flex-direction: column; flex: 1; }
+    #form-view { display: flex; flex-direction: column; flex: 1; }
     .form-topbar {
       display: flex; align-items: center; justify-content: space-between;
       padding: 14px 1.5rem; border-bottom: 1px solid #e8f1fb;
@@ -199,14 +191,12 @@
     .form-title { font-size: 17px; font-weight: 600; margin: 0; color: #0a0a0a; }
     .btn-text-cancel {
       background: none; border: none; cursor: pointer;
-      color: #666; font-size: 14px;
-      padding: 6px 8px; border-radius: 6px; font-family: inherit;
+      color: #666; font-size: 14px; padding: 6px 8px;
+      border-radius: 6px; font-family: inherit;
     }
     .btn-text-cancel:hover { color: #0a0a0a; }
-
     .msg { font-size: 13px; padding: 9px 12px; border-radius: 8px; margin-bottom: 1rem; }
     .msg-error { background: #fdf1f0; color: #c0392b; }
-
     .form-body { flex: 1; overflow-y: auto; padding: 1.25rem 1.5rem 3rem; }
     .section-label {
       font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px;
@@ -221,28 +211,26 @@
       background: #f5faff; color: #0a0a0a;
       font-size: 15px; font-family: inherit;
     }
-    .field-group input:focus { outline: none; border-color: #1a6fb5; box-shadow: 0 0 0 3px rgba(26,111,181,0.12); background: #fff; }
-
+    .field-group input:focus { outline: none; border-color: #1a6fb5; background: #fff; }
     .btn-primary {
       display: block; width: 100%; padding: 13px; margin-top: 1.5rem;
-      background: #0a0a0a; color: #fff;
-      border: none; border-radius: 10px;
+      background: #0a0a0a; color: #fff; border: none; border-radius: 10px;
       font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;
-      transition: background 0.15s, transform 0.1s;
+      transition: background 0.15s;
     }
-    .btn-primary:hover { background: #1a4f8a; transform: translateY(-1px); }
+    .btn-primary:hover { background: #1a4f8a; }
 
     /* ── Responsive ── */
     @media (max-width: 680px) {
-      .contacts-layout { flex-direction: column; padding: 10px; gap: 10px; }
-      .panel-list { width: 100%; border-right: none; max-height: 45vh; }
+      #main-wrapper { flex-direction: column; }
+      #panel-list { width: 100%; flex: 0 0 45%; }
+      #panel-detail { flex: 1; }
     }
   </style>
 </head>
 <body class="page-contacts">
 
-  <!-- TOP NAV -->
-  <header class="topbar" role="banner">
+  <header id="topbar" role="banner">
     <span class="logo-sm">Contact<span>Hub</span></span>
     <nav class="topbar-right" aria-label="User actions">
       <span class="user-greeting" id="user-greeting"></span>
@@ -252,47 +240,46 @@
     </nav>
   </header>
 
-  <!-- MAIN LAYOUT -->
-  <main class="contacts-layout">
+  <div id="main-wrapper">
 
     <!-- LEFT PANEL -->
-    <aside class="panel-list" aria-label="Contacts list">
+    <div id="panel-list" aria-label="Contacts list">
 
       <div class="search-wrap">
         <label for="search-input" class="sr-only">Search contacts</label>
         <div class="search-icon-wrap">
           <i class="ti ti-search" aria-hidden="true"></i>
-          <input type="search" id="search-input" placeholder="Search contacts..." autocomplete="off" aria-label="Search contacts" />
+          <input type="search" id="search-input" placeholder="Search contacts..." autocomplete="off" />
         </div>
       </div>
 
       <div class="list-meta">
         <span id="contact-count">0 contacts</span>
-        <button class="btn-add-sm" id="btn-add-contact" type="button" aria-label="Add new contact">
+        <button class="btn-add-sm" id="btn-add-contact" type="button">
           <i class="ti ti-plus" aria-hidden="true"></i> Add
         </button>
       </div>
 
-      <ul class="contacts-list" id="contacts-list" role="list" aria-live="polite"></ul>
+      <ul id="contacts-list" role="list" aria-live="polite"></ul>
 
-      <div class="empty-state hidden" id="empty-state" aria-live="polite">
+      <div id="empty-state" class="hidden" aria-live="polite">
         <i class="ti ti-users" aria-hidden="true"></i>
         <p>No contacts found.</p>
-        <p class="empty-hint">Tap Add to create your first one.</p>
+        <p style="font-size:13px; color:#bbb;">Tap Add to create your first one.</p>
       </div>
 
-    </aside>
+    </div>
 
     <!-- RIGHT PANEL -->
-    <section class="panel-detail" id="panel-detail" aria-label="Contact detail">
+    <div id="panel-detail" aria-label="Contact detail">
 
-      <div class="detail-placeholder" id="detail-placeholder">
+      <div id="detail-placeholder">
         <i class="ti ti-address-book" aria-hidden="true"></i>
         <p>Select a contact to view details</p>
       </div>
 
       <!-- DETAIL VIEW -->
-      <div class="detail-view hidden" id="detail-view">
+      <div id="detail-view" class="hidden">
         <div class="detail-hero">
           <div class="avatar-lg" id="detail-avatar"></div>
           <h1 class="detail-name" id="detail-name"></h1>
@@ -339,7 +326,7 @@
       </div>
 
       <!-- ADD / EDIT FORM -->
-      <div class="form-view hidden" id="form-view">
+      <div id="form-view" class="hidden">
         <div class="form-topbar">
           <h2 class="form-title" id="form-title">New Contact</h2>
           <button class="btn-text-cancel" id="btn-cancel-form" type="button">Cancel</button>
@@ -383,9 +370,9 @@
         </div>
       </div>
 
-    </section>
+    </div>
 
-  </main>
+  </div>
 
   <script src="js/contacts.js"></script>
 
