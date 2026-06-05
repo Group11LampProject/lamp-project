@@ -6,31 +6,144 @@
   <title>ContactHub - Sign In</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #ddeeff;
+      color: #0a0a0a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-wrap {
+      width: 100%;
+      max-width: 420px;
+      padding: 2rem 1.5rem;
+    }
+
+    .auth-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #b8d4ee;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .hidden { display: none !important; }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+      color: #0a0a0a;
+    }
+    .logo span { color: #1a6fb5; }
+
+    .auth-sub {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 1.75rem;
+    }
+
+    /* Messages */
+    .msg {
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .msg-error  { background: #fde8e8; color: #b91c1c; border: 1px solid rgba(185,28,28,0.2); }
+    .msg-success{ background: #e6f4ea; color: #166534; border: 1px solid rgba(22,101,52,0.2); }
+    .field-error { font-size: 12px; color: #b91c1c; margin-top: 4px; }
+
+    /* Fields */
+    .field-group { margin-bottom: 1.1rem; }
+    .field-group label {
+      display: block;
+      font-size: 13px;
+      color: #444;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .field-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #b8d4ee;
+      border-radius: 8px;
+      background: #f0f7ff;
+      color: #0a0a0a;
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field-group input:focus {
+      outline: none;
+      border-color: #1a6fb5;
+      box-shadow: 0 0 0 3px rgba(26,111,181,0.12);
+      background: #fff;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #0a0a0a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      margin-top: 0.5rem;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #1a6fb5; }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid #ddeeff;
+      margin: 1.5rem 0;
+    }
+
+    .switch-link {
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+    }
+    .switch-link a {
+      color: #1a6fb5;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .switch-link a:hover { text-decoration: underline; }
+  </style>
 </head>
 <body class="page-auth">
 
   <main class="auth-wrap">
 
-    <!-- ========== LOGIN FORM ========== -->
+    <!-- LOGIN FORM -->
     <section class="auth-card" id="section-login">
 
       <div class="logo">Contact<span>Hub</span></div>
       <p class="auth-sub">Sign in to your account</p>
 
-      <!-- Inline error shown by JS on failed login, no alert() allowed -->
       <div class="msg msg-error hidden" id="login-error" role="alert" aria-live="polite">
         Incorrect email or password.
       </div>
 
       <div class="field-group">
         <label for="login-email">Email address</label>
-        <!--
-          JS: on submit, POST to /LAMPAPI/Login.php
-          Body:  { "email": "...", "password": "..." }
-          Expect: { "id": 1, "firstName": "...", "lastName": "...", "error": "" }
-          On success: store user data in sessionStorage, redirect to contacts.html
-          On failure: show #login-error
-        -->
         <input type="email" id="login-email" placeholder="you@email.com"
                autocomplete="email" required />
       </div>
@@ -45,37 +158,27 @@
 
       <hr class="divider" />
       <p class="switch-link">
-        No account?
-        <a href="#" id="link-show-register">Create one</a>
+        No account? <a href="#" id="link-show-register">Create one</a>
       </p>
 
     </section>
 
-    <!-- ========== REGISTER FORM ========== -->
+    <!-- REGISTER FORM -->
     <section class="auth-card hidden" id="section-register">
 
       <div class="logo">Contact<span>Hub</span></div>
       <p class="auth-sub">Create your free account</p>
 
-      <!-- Success message shown by JS after successful registration -->
       <div class="msg msg-success hidden" id="register-success" role="status" aria-live="polite">
         Account created. You can now sign in.
       </div>
 
-      <!-- Inline error for registration failures -->
       <div class="msg msg-error hidden" id="register-error" role="alert" aria-live="polite">
         Something went wrong. Please try again.
       </div>
 
       <div class="field-group">
         <label for="reg-firstname">First name</label>
-        <!--
-          JS: on submit, POST to /LAMPAPI/Register.php
-          Body:  { "firstName": "...", "lastName": "...", "email": "...", "password": "..." }
-          Expect: { "error": "" }
-          On success: show #register-success, switch back to login section
-          On failure: show #register-error with server message
-        -->
         <input type="text" id="reg-firstname" placeholder="Jane"
                autocomplete="given-name" required />
       </div>
@@ -102,7 +205,6 @@
         <label for="reg-confirm">Confirm password</label>
         <input type="password" id="reg-confirm" placeholder="Repeat password"
                autocomplete="new-password" required />
-        <!-- Shown by JS if passwords do not match, before any API call -->
         <p class="field-error hidden" id="reg-match-error">Passwords do not match.</p>
       </div>
 
@@ -110,8 +212,7 @@
 
       <hr class="divider" />
       <p class="switch-link">
-        Already have an account?
-        <a href="#" id="link-show-login">Sign in</a>
+        Already have an account? <a href="#" id="link-show-login">Sign in</a>
       </p>
 
     </section>
@@ -119,13 +220,6 @@
   </main>
 
   <script src="js/login.js"></script>
-  <!--
-    login.js responsibilities (JS teammate):
-    - Toggle between #section-login and #section-register when links are clicked.
-    - If URL hash is #register on load, show register section automatically.
-    - Handle login POST and register POST as described in comments above.
-    - Never use alert() for errors, use the .msg elements already in the HTML.
-  -->
 
 </body>
 </html>
