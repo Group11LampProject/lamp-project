@@ -18,7 +18,7 @@
       <p class="auth-sub">Sign in to your account</p>
 
       <!-- Inline error shown by JS on failed login, no alert() allowed -->
-      <div class="msg msg-error" id="login-error" role="alert" aria-live="polite">
+      <div class="msg msg-error hidden" id="login-error" role="alert" aria-live="polite">
         Incorrect email or password.
       </div>
 
@@ -58,12 +58,12 @@
       <p class="auth-sub">Create your free account</p>
 
       <!-- Success message shown by JS after successful registration -->
-      <div class="msg msg-success" id="register-success" role="status" aria-live="polite">
+      <div class="msg msg-success hidden" id="register-success" role="status" aria-live="polite">
         Account created. You can now sign in.
       </div>
 
       <!-- Inline error for registration failures -->
-      <div class="msg msg-error" id="register-error" role="alert" aria-live="polite">
+      <div class="msg msg-error hidden" id="register-error" role="alert" aria-live="polite">
         Something went wrong. Please try again.
       </div>
 

@@ -1,7 +1,7 @@
 // login.js
 // Handles login form, register form, and toggling between them.
 
-const API = '/lamp-test/LAMPAPI'; // base path for all PHP endpoints
+const API = '/LAMPAPI'; // base path for all PHP endpoints
 
 // --- Section toggle ---
 const sectionLogin    = document.getElementById('section-login');

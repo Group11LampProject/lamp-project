@@ -1,7 +1,7 @@
 // contacts.js
 // Handles the full contacts dashboard: list, search, detail, add, edit, delete.
 
-const API  = '/lamp-test/LAMPAPI';
+const API  = '/LAMPAPI';
 const user = JSON.parse(sessionStorage.getItem('user'));
 
 // Redirect to login if not authenticated

@@ -1,9 +1,9 @@
 <?php
 
 $host = "localhost";
-$user = "contacthubuser";
-$pass = "ContactHubPass123!";
-$dbname = "ContactHub";
+$user = "hub_api";
+$pass = "password123";
+$dbname = "hub";
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 

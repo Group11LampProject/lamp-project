@@ -646,3 +646,19 @@ select {
   margin-left: auto;
   margin-right: auto;
 }
+.hidden {
+  display: none !important;
+}
+.success-text {
+  color: var(--success);
+  background: var(--success-subtle);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.error-text {
+  color: var(--danger);
+  background: var(--danger-subtle);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+}
